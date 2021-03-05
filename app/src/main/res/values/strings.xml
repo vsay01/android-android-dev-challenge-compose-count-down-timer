@@ -10,4 +10,5 @@
       the License.
       -->
     <string name="app_name">AndroidDevChallenge</string>
+    <string name="label_play_timer">Play Timer</string>
 </resources>
