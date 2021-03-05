@@ -13,9 +13,12 @@ In this challenge, it focus on how we manage state and create animation with Jet
 
 
 ## :camera_flash: Screenshots
-<img src="/results/screenshot_1.png" width="260">&emsp;<img src="/results/screenshot_2.png" width="260"&emsp;<img src="/results/screenshot_3.png" width="260"&emsp;<img src="/results/screenshot_4.png" width="260"&emsp;<img src="/results/screenshot_5.png" width="260">
+<img src="/results/screenshot_1.png" width="260">&emsp;<img src="/results/screenshot_2.png" width="260">&emsp;<img src="/results/screenshot_3.png" width="260">&emsp;<img src="/results/screenshot_4.png" width="260">&emsp;<img src="/results/screenshot_5.png" width="260">
 
-![CountDownTimerVideo](/results/video.mp4)
+
+
+![video](https://user-images.githubusercontent.com/6526127/110110309-3db6ca80-7d74-11eb-9136-457144f55ee0.gif)
+
 ## License
 ```
 Copyright 2020 The Android Open Source Project
