@@ -17,10 +17,15 @@ package com.example.androiddevchallenge.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -42,7 +47,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -53,6 +57,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,6 +67,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -70,7 +76,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
-import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.theme.CountDownTimerTheme
+import com.example.androiddevchallenge.ui.theme.countDownTimerTypography
 import com.example.androiddevchallenge.util.getHour
 import com.example.androiddevchallenge.util.getMillisecondsFromTimer
 import com.example.androiddevchallenge.util.getMinute
@@ -102,7 +109,8 @@ fun Home(
             TopAppBar(
                 title = {
                     Text(text = "Timer")
-                }
+                },
+                backgroundColor = MaterialTheme.colors.primarySurface
             )
         }
     ) {
@@ -156,7 +164,7 @@ fun ShowEnterTime(
         )
     ) {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = defaultSpacerSize)
+            modifier = Modifier.padding(horizontal = defaultSpacerSize),
         ) {
             item {
                 Row(
@@ -205,10 +213,6 @@ fun ShowEnterTime(
                         )
                     }
                 }
-            }
-            item {
-                Divider(color = Color(R.color.purple_700), thickness = 2.dp)
-                Spacer(Modifier.height(defaultSpacerSize))
             }
             item {
                 Row {
@@ -322,7 +326,10 @@ fun ShowEnterTime(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowPlayButton(isVisible = isNumberSelected(time = homeViewModel.time), homeViewModel)
+                    ShowPlayButton(
+                        isVisible = isNumberSelected(time = homeViewModel.time),
+                        homeViewModel
+                    )
                 }
             }
         }
@@ -358,7 +365,7 @@ fun ShowPlayButton(
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .size(60.dp)
                 .background(
-                    color = Color(R.color.purple_700),
+                    color = Color.Black,
                     shape = CircleShape
                 ),
         ) {
@@ -423,6 +430,25 @@ fun ShowCountDownTimer(
                 animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
             )
 
+            // Animation
+            val infiniteTransition = rememberInfiniteTransition()
+            val timerColor by infiniteTransition.animateColor(
+                initialValue = Color.Black,
+                targetValue = Color.Red,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+            val timerSize by infiniteTransition.animateFloat(
+                initialValue = 40f,
+                targetValue = 55f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                 CircularProgressIndicator(
                     progress = 1F,
@@ -430,7 +456,7 @@ fun ShowCountDownTimer(
                     modifier = Modifier
                         .padding(24.dp)
                         .fillMaxSize(),
-                    strokeWidth = 4.dp
+                    strokeWidth = 8.dp
                 )
                 if (progress >= 0) {
                     CircularProgressIndicator(
@@ -438,8 +464,8 @@ fun ShowCountDownTimer(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(24.dp),
-                        color = MaterialTheme.colors.secondary,
-                        strokeWidth = 4.dp,
+                        color = Color.Black,
+                        strokeWidth = 8.dp,
                     )
                 }
                 Box(
@@ -449,7 +475,9 @@ fun ShowCountDownTimer(
                     Row {
                         Text(
                             text = homeViewModel.getFormattedTimer(homeViewModel.timeRemaining),
-                            style = MaterialTheme.typography.h2
+                            style = countDownTimerTypography.h3,
+                            color = if (!homeViewModel.isTimerRunning) timerColor else Color.Black,
+                            fontSize = if (!homeViewModel.isTimerRunning) timerSize.sp else 40.sp
                         )
                     }
                 }
@@ -481,17 +509,13 @@ fun ButtonRow(
         Row {
             IconButton(
                 onClick = {
-                    homeViewModel.totalTime = getMillisecondsFromTimer(homeViewModel.time)
-                    homeViewModel.timeRemaining = getMillisecondsFromTimer(homeViewModel.time)
-
-                    shouldDisplayEnterTime.value = true
-                    shouldDisplayCountDownTimer.value = false
+                    clearTimer(homeViewModel = homeViewModel)
                 },
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .size(60.dp)
                     .background(
-                        color = Color(R.color.purple_700),
+                        color = Color.Red,
                         shape = CircleShape
                     ),
             ) {
@@ -511,7 +535,7 @@ fun ButtonRow(
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .size(60.dp)
                     .background(
-                        color = Color(R.color.purple_700),
+                        color = Color.Black,
                         shape = CircleShape
                     ),
             ) {
@@ -551,11 +575,14 @@ fun PresentDialog(homeViewModel: HomeViewModel) {
                     homeViewModel.shouldDialogShow = false
                 },
                 title = {
-                    Text(text = "Time's Up", style = MaterialTheme.typography.h4)
+                    Text(
+                        text = stringResource(R.string.str_time_up),
+                        style = MaterialTheme.typography.h4
+                    )
                 },
                 text = {
                     Text(
-                        "Your count down timer: ${
+                        "Your count down timer is ${
                         homeViewModel.getFormattedTimer(
                             getMillisecondsFromTimer(homeViewModel.time)
                         )
@@ -568,26 +595,38 @@ fun PresentDialog(homeViewModel: HomeViewModel) {
                 dismissButton = {
                     Button(
                         onClick = {
-                            homeViewModel.totalTime = getMillisecondsFromTimer(homeViewModel.time)
-                            homeViewModel.timeRemaining = getMillisecondsFromTimer(homeViewModel.time)
-
-                            shouldDisplayEnterTime.value = true
-                            shouldDisplayCountDownTimer.value = false
-
+                            clearTimer(homeViewModel = homeViewModel)
                             homeViewModel.shouldDialogShow = false
                         }
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.str_ok))
                     }
                 }
             )
     }
 }
 
+fun clearTimer(homeViewModel: HomeViewModel) {
+    homeViewModel.time = "00h 00m 00s"
+    homeViewModel.totalTime = getMillisecondsFromTimer(homeViewModel.time)
+    homeViewModel.timeRemaining =
+        getMillisecondsFromTimer(homeViewModel.time)
+    shouldDisplayEnterTime.value = true
+    shouldDisplayCountDownTimer.value = false
+}
+
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
 @Composable
 fun LightPreview() {
-    MyTheme {
+    CountDownTimerTheme {
+        Home(homeViewModel = viewModel(), {}, {})
+    }
+}
+
+@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+@Composable
+fun DarkPreview() {
+    CountDownTimerTheme(darkTheme = true) {
         Home(homeViewModel = viewModel(), {}, {})
     }
 }

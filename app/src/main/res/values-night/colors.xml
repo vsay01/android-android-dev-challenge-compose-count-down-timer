@@ -9,7 +9,5 @@
   the License.
   -->
 <resources>
-    <color name="red700">#dd0d3c</color>
-    <color name="status_bar">#c20029</color>
-    <color name="black">#000000</color>
+    <color name="status_bar">#202020</color>
 </resources>
