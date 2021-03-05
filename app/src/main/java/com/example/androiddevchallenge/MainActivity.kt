@@ -17,45 +17,36 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.screen.Home
+import com.example.androiddevchallenge.ui.theme.CountDownTimerTheme
+import com.example.androiddevchallenge.viewmodel.HomeViewModel
 
 class MainActivity : AppCompatActivity() {
+
+    private val homeViewModel by viewModels<HomeViewModel>()
+
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyTheme {
-                MyApp()
+            CountDownTimerTheme {
+                MyApp(homeViewModel)
             }
         }
     }
 }
 
 // Start building your app here!
+@ExperimentalAnimationApi
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
-    }
-}
-
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
-    }
+fun MyApp(homeViewModel: HomeViewModel) {
+    Home(
+        homeViewModel = homeViewModel,
+        onNumberSelected = homeViewModel::addTime,
+        onNumberRemoved = homeViewModel::removeTime
+    )
 }

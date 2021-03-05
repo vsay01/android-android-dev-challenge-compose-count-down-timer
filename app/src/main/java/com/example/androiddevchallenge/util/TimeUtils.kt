@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge.ui.theme
+package com.example.androiddevchallenge.util
 
-import androidx.compose.ui.graphics.Color
+import java.util.concurrent.TimeUnit
 
-val Red200 = Color(0xfff297a2)
-val Red300 = Color(0xffea6d7e)
-val Red700 = Color(0xffdd0d3c)
-val Red800 = Color(0xffd00036)
-val Red900 = Color(0xffc20029)
+fun getMillisecondsFromTimer(time: String) =
+    TimeUnit.SECONDS.toMillis(time.getSecond().toLong()) +
+        TimeUnit.MINUTES.toMillis(time.getMinute().toLong()) +
+        TimeUnit.HOURS.toMillis(time.getHour().toLong())

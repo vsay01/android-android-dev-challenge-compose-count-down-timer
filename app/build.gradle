@@ -73,9 +73,17 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha03"
 
     testImplementation 'junit:junit:4.13.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=io.ktor.locations.KtorExperimentalLocationsAPI"]
 }
